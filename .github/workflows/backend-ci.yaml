@@ -2,6 +2,10 @@ name: backend CI pipeline
 
 on: 
   push: 
+    paths: 
+      - 'services/backend/**'
+      - '.github/workflows/backend-ci.yaml'
+
 
 jobs: 
   docker: 
