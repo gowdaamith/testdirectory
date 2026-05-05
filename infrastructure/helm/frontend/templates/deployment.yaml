@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  name: {{ .Values.name  }}
+spec:
+  replicas: {{.Values.replicaCount}} 
+  selector: 
+    matchLabels: 
+      app: {{ .Values.app }}
+  template:
+    metadata: 
+     labels:
+       app: {{ .Values.app }}
+    spec: 
+      containers:
+        - name:  {{ .Values.containerName }} 
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          ports:
+            - containerPort: {{ .Values.ports.containerPort }}
+
+          env:
+            - name: BACKEND_URL
+              valueFrom: 
+                configMapKeyRef:
+                  name: {{ .Values.configMap.name }}
+                  key: BACKEND_URL
+          resources: 
+            requests:
+              cpu: {{ .Values.resource.requests.cpu }}
+              memory: {{ .Values.resource.requests.memory }}
+            limits:
+              cpu: {{ .Values.resource.limits.cpu }}
+              memory: {{ .Values.resource.limits.memory }}
+
+
+
+          startupProbe:
+            httpGet:
+              path:  {{ .Values.startupProbe.path}}
+              port: {{ .Values.startupProbe.port}}
+            failureThreshold: {{ .Values.startupProbe.failureThreshold }}
+            periodSeconds: {{ .Values.startupProbe.periodSeconds }}
+        
+           
+          livenessProbe: 
+            httpGet: 
+              path: {{ .Values.livenessProbe.path}}
+              port: {{ .Values.livenessProbe.port }}
+            initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
+
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.readinessProbe.path }}
+              port: {{ .Values.readinessProbe.port }}
+            periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
+

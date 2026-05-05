@@ -1,0 +1,72 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{  .Values.deployment.name}}
+  labels:
+    app: {{ .Values.deployment.app }}
+spec:
+  replicas: {{ .Values.deployment.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.deployment.app }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.deployment.app }}
+    spec:
+      containers:
+      - name: {{ .Values.deployment.containername }}
+        image: {{ .Values.deployment.image }}
+        ports:
+        - containerPort: {{ .Values.deployment.containerPort }}
+        env:
+          - name: APP_NAME
+            valueFrom:
+             configMapKeyRef:
+               name: {{ .Values.configMap.configMapfilename }}
+               key: APP_NAME
+          - name: ENVIRONMENT
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.configMap.configMapfilename }}
+                key: ENVIRONMENT 
+          - name: DB_HOST
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.configMap.configMapfilename }}
+                key: DB_HOST 
+          - name: DB_USER
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.secret.secretfilename }}
+                key: DB_USER
+          - name: DB_PASS
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.secret.secretfilename }}
+                key: DB_PASS 
+        resources:
+          requests:
+            cpu: {{ .Values.requests.cpu }}    
+            memory: {{ .Values.requests.memory }}
+          limits:
+            cpu: {{ .Values.limits.cpu }}
+            memory: {{ .Values.limits.memory }}
+        startupProbe:
+          httpGet:
+             path: {{ .Values.startupProbe.path }}
+             port: {{ .Values.startupProbe.port }}
+          failureThreshold: {{ .Values.startupProbe.failureThreshold }}
+          periodSeconds: {{ .Values.startupProbe.periodSeconds }}
+        livenessProbe:
+          httpGet:
+            path: {{ .Values.livenessProbe.path }}
+            port: {{ .Values.livenessProbe.port }}
+          initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySecond }}
+          periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
+
+        readinessProbe:
+          httpGet:
+            path: {{ .Values.readinessProbe.path }}
+            port: {{ .Values.readinessProbe.port }}
+          periodSeconds: {{ .Values.readinessProbe.periodSeconds }}

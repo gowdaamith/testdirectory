@@ -1,0 +1,57 @@
+name: frontend-deployment
+app: frontend
+replicaCount: 1
+containerName: frontend-container
+image: 
+  repository: gowdaamith/frontend
+  tag: v3
+ports:
+  containerPort: 3000
+configMap:
+  name: app-configmapf
+  APP_NAME: backend-service
+  ENVIRONMENT: PROD
+  FEATURE_FLAG: "true"
+  BACKEND_URL: http://backend-service:3000
+  DB_HOST: mongo-service
+
+resource:
+  requests: 
+    cpu:    "200m"
+    memory: "256Mi"
+  limits:
+    cpu:   "400m"
+    memory: "516Mi"
+startupProbe:
+  path: /health
+  port: 3000
+  failureThreshold: 30
+  periodSeconds: 5
+livenessProbe:
+  path: /health
+  port: 3000
+  initialDelaySeconds: 5
+  periodSeconds: 5
+readinessProbe:
+  path: /health
+  port: 3000
+  periodSeconds: 5
+
+servicename: frontend-service
+protocol: TCP
+serviceport: 80
+containerPort: 3000
+typeport: ClusterIP
+
+
+ingress:
+  name: frontend-ingress
+  hostname: myapp.local
+  pathtype: Prefix
+  path: /
+  servicename: frontend-service
+  serviceportnumber: 80
+
+
+
+

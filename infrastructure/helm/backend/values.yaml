@@ -1,0 +1,52 @@
+deployment: 
+  name: backend-deployment
+  app: backend
+  replicas: 2
+  containername: backend-containername
+  image: gowdaamith/backend:v2
+  containerPort: 3000
+configMap:
+  configMapfilename: app-configmapd
+secret: 
+  secretfilename: app-secretd
+requests:
+  cpu: "200m" 
+  memory: "256Mi"
+limits:
+  cpu: "400m"
+  memory: "512Mi"
+startupProbe:
+  path: /health
+  port: 3000
+  failureThreshold: 30
+  periodSeconds: 5
+livenessProbe:
+  path: /health
+  port: 3000
+  initialDelaySecond: 5
+  periodSeconds: 10
+readinessProbe:
+  path: /health
+  port: 3000
+  periodSeconds: 10
+
+service:
+  name: backend-service
+  app: backend
+  protocol: TCP
+  port: 3000
+  targetPort: 3000
+  type: ClusterIP
+
+configMapfile:
+  name: app-configmapd
+  APP_NAME: backend-service
+  ENVIRONMENT: dev
+  FEATURE_FLAG: "true"
+  BACKEND_URL: http://backend-service:3000
+  DB_HOST: mongo-service
+
+secretfile:
+  name: app-secretd
+  DB_USER: admin
+  DB_PASS: strongPassword123

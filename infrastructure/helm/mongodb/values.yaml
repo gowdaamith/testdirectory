@@ -1,0 +1,66 @@
+statefulset:
+  name: mongodb
+  servicename: mongo-service
+  replica: 1
+  app: mongo
+  containerName: mongo-container
+  image: mongo:6
+  containerPort: 27017
+  
+
+startupProbe: 
+  port: 27017
+  failureThreshold: 30
+  periodSeconds: 5
+
+readinessProbe:
+  port: 27017
+  initialDelaySeconds: 5
+  periodSeconds: 5
+
+livenessProbe:
+  port: 27017
+  initialDelaySeconds: 20
+  periodSeconds: 10
+
+env:
+  configfilename: app-configmap
+  secretfilename: app-secret
+
+
+resource:
+  requests:
+    cpu: "250m"
+    memory: "512Mi"
+  limits: 
+    cpu: "500m" 
+    memory: "600Mi"
+
+
+volumeMounts:
+  mountPath: /data/db
+
+volumeClaimTemplates:
+  name: mongo-storage
+  accessModes: ReadWriteOnce
+  storage: 1Gi
+
+service:
+  name: mongo-service
+  protocol:  TCP
+  port: 27017
+  type: ClusterIP
+
+configMap: 
+  name: app-configmap
+  APP_NAME:  backend-service
+  ENVIRONMENT: dev
+  FEATURE_FLAG: "true"
+  BACKEND_URL: http://backend-service:3000
+  DB_HOST: mongo-service
+
+secret:
+  name: app-secret
+  DB_USER: admin
+  DB_PASS: strongPassword123
+

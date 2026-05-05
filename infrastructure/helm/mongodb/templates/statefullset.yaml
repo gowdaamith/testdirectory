@@ -1,0 +1,82 @@
+apiVersion: apps/v1
+kind: StatefulSet
+
+metadata:
+  name: {{ .Values.statefulset.name }}
+
+spec:
+  serviceName: {{ .Values.statefulset.servicename }}
+  replicas: {{ .Values.statefulset.replica }}
+
+  selector:
+    matchLabels:
+      app: {{ .Values.statefulset.app }}
+
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.statefulset.app }}
+
+    spec:
+      containers:
+        - name: {{ .Values.statefulset.containerName }}
+          image: {{ .Values.statefulset.image }}
+
+          ports:
+            - containerPort: {{ .Values.statefulset.containerPort }}
+
+          startupProbe:
+            tcpSocket:
+              port: {{ .Values.startupProbe.port }}
+            failureThreshold: {{ .Values.startupProbe.failureThreshold }}
+            periodSeconds: {{ .Values.startupProbe.periodSeconds }}
+
+          livenessProbe:
+            tcpSocket:
+              port: {{ .Values.livenessProbe.port }}
+            initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
+
+          readinessProbe:
+            tcpSocket:
+              port: {{ .Values.readinessProbe.port }}
+            initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
+
+          env:
+            - name: MONGO_INITDB_ROOT_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.env.secretfilename }}
+                  key: DB_USER
+
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.env.secretfilename }}
+                  key: DB_PASS
+
+          resources:
+            requests:
+              cpu: {{ .Values.resource.requests.cpu }}
+              memory: {{ .Values.resource.requests.memory }}
+
+            limits:
+              cpu: {{ .Values.resource.limits.cpu }}
+              memory: {{ .Values.resource.limits.memory }}
+
+          volumeMounts:
+            - name: {{ .Values.volumeClaimTemplates.name }}
+              mountPath: {{ .Values.volumeMounts.mountPath }}
+
+  volumeClaimTemplates:
+    - metadata:
+        name: {{ .Values.volumeClaimTemplates.name }}
+
+      spec:
+        accessModes:
+          - {{ .Values.volumeClaimTemplates.accessModes }}
+
+        resources:
+          requests:
+            storage: {{ .Values.volumeClaimTemplates.storage }}

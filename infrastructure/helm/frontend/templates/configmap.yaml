@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata: 
+  name:  {{ .Values.configMap.name }}
+data:
+  APP_NAME: " {{ .Values.configMap.APP_NAME }}"
+  ENVIRONMENT: "{{ .Values.configMap.ENVIRONMENT }}"
+  FEATURE_FLAG: "{{ .Values.configMap.FEATURE_FLAG }}"
+  BACKEND_URL:  "{{ .Values.configMap.BACKEND_URL }}"
+  DB_HOST: "{{ .Values.configMap.DB_HOST }}"
+
