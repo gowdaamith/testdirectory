@@ -1,32 +1,29 @@
 name: backend CI pipeline
 
-on: 
-  push: 
-    paths: 
+on:
+  push:
+    paths:
       - 'services/backend/**'
       - '.github/workflows/backend-ci.yaml'
 
-
-jobs: 
-  docker: 
+jobs:
+  docker:
     runs-on: ubuntu-latest
-    steps: 
-      -
-        name: checkout
-        uses: actions/checkout@v6
 
-     - 
-        name: Login to docker hub
-        uses: docker/login-action@v4
-        with: 
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
-     - 
-        name: Build the backed docker image 
-        run: |
-          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/backend:${{ github.sha }} .services/backend
 
-    - 
-       name: Push backend docker image
-       run: | 
-         docker push ${{ secrets.DOCKERHUB_USERNAME}}/backend:{{ github.sha }}
+      - name: Build backend Docker image
+        run: |
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/backend:${{ github.sha }} ./services/backend
+
+      - name: Push backend Docker image
+        run: |
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/backend:${{ github.sha }}
