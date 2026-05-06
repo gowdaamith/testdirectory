@@ -1,8 +1,8 @@
 name: frontend CI pipeline 
 on: 
   push:
-    paths
-      - 'services/frontend/**'
+    paths:
+      - 'services/frontend/**' 
       - '.github/workflows/frontend-ci.yaml'
 
 jobs: 
