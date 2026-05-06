@@ -3,7 +3,7 @@ on:
   push:
     paths:
       - 'services/frontend/**' 
-      - '.github/workflows/frontend-ci.yaml'
+      - '.github/workflows/frontend-ci.yaml' 
 
 jobs: 
   docker:
