@@ -1,4 +1,4 @@
-name: frontend CI pipeline 
+name: frontend CI pipeline  
 on: 
   push:
     paths:
