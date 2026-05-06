@@ -6,7 +6,7 @@ on:
       - 'services/backend/**'
       - '.github/workflows/backend-ci.yaml'
 
-jobs:
+jobs: 
   docker:
     runs-on: ubuntu-latest
 
