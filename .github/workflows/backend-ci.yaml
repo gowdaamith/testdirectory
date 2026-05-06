@@ -3,7 +3,7 @@ name: backend CI pipeline
 on:
   push:
     paths:
-      - 'services/backend/**'
+      - 'services/backend/**' 
       - '.github/workflows/backend-ci.yaml'
 
 jobs: 
